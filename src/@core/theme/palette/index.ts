@@ -1,33 +1,50 @@
+import { globalColors } from 'src/utils/styles';
 // ** Type Imports
 import { PaletteMode } from '@mui/material'
-import { ThemeColor } from 'src/@core/layouts/types'
+import { Skin, ThemeColor } from 'src/@core/layouts/types'
 
-const DefaultPalette = (mode: PaletteMode, themeColor: ThemeColor) => {
+const DefaultPalette = (mode: PaletteMode, skin: Skin, themeColor: ThemeColor) => {
   // ** Vars
-  const lightColor = '58, 53, 65'
-  const darkColor = '231, 227, 252'
+  const lightColor = globalColors.primary
+  const darkColor = globalColors.secondary
   const mainColor = mode === 'light' ? lightColor : darkColor
 
   const primaryGradient = () => {
     if (themeColor === 'primary') {
-      return '#9155FD'
+      return globalColors.secondary;
     } else if (themeColor === 'secondary') {
-      return '#9C9FA4'
+        return globalColors.secondary;
     } else if (themeColor === 'success') {
-      return '#93DD5C'
+        return globalColors.secondary;
     } else if (themeColor === 'error') {
-      return '#FF8C90'
+        return globalColors.secondary;
     } else if (themeColor === 'warning') {
-      return '#FFCF5C'
+        return globalColors.secondary;
     } else {
-      return '#6ACDFF'
+        return globalColors.secondary
+        
     }
+  }
+
+  const defaultBgColor = () => {
+    if (skin === 'bordered' && mode === 'light') {
+        return globalColors.blanco;
+    } else if (skin === 'bordered' && mode === 'dark') {
+      return globalColors.blanco;
+    } else if (mode === 'light') {
+      return globalColors.blanco;
+    } else return globalColors.blanco;
   }
 
   return {
     customColors: {
+      dark: darkColor,
       main: mainColor,
+      light: lightColor,
+      darkBg: globalColors.primary,
+      lightBg: globalColors.secondary,
       primaryGradient: primaryGradient(),
+      bodyBg: mode === 'light' ? '#F4F5FA' : '#28243D', // Same as palette.background.default but doesn't consider bordered skin
       tableHeaderBg: mode === 'light' ? '#F9FAFC' : '#3D3759'
     },
     common: {
@@ -36,15 +53,15 @@ const DefaultPalette = (mode: PaletteMode, themeColor: ThemeColor) => {
     },
     mode: mode,
     primary: {
-      light: '#9E69FD',
-      main: '#33b8ff',
-      dark: '#804BDF',
+      light: globalColors.primary,
+      main: globalColors.primary,
+      dark: globalColors.primary,
       contrastText: '#FFF'
     },
     secondary: {
-      light: '#9C9FA4',
-      main: '#8A8D93',
-      dark: '#777B82',
+      light: globalColors.secondary,
+      main: globalColors.secondary,
+      dark: globalColors.secondary,
       contrastText: '#FFF'
     },
     success: {
@@ -95,7 +112,7 @@ const DefaultPalette = (mode: PaletteMode, themeColor: ThemeColor) => {
     divider: `rgba(${mainColor}, 0.12)`,
     background: {
       paper: mode === 'light' ? '#FFF' : '#312D4B',
-      default: mode === 'light' ? '#F4F5FA' : '#28243D'
+      default: defaultBgColor()
     },
     action: {
       active: `rgba(${mainColor}, 0.54)`,

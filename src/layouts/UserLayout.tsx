@@ -2,20 +2,24 @@
 import { ReactNode } from 'react'
 
 // ** MUI Imports
-import Box from '@mui/material/Box'
 import { Theme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 
 // ** Layout Imports
 // !Do not remove this Layout import
-import VerticalLayout from 'src/@core/layouts/VerticalLayout'
+import Layout from 'src/@core/layouts/Layout'
 
 // ** Navigation Imports
 import VerticalNavItems from 'src/navigation/vertical'
+import HorizontalNavItems from 'src/navigation/horizontal'
 
 // ** Component Import
-import UpgradeToProButton from './components/UpgradeToProButton'
+// Uncomment the below line (according to the layout type) when using server-side menu
+// import ServerSideVerticalNavItems from './components/vertical/ServerSideNavItems'
+// import ServerSideHorizontalNavItems from './components/horizontal/ServerSideNavItems'
+
 import VerticalAppBarContent from './components/vertical/AppBarContent'
+import HorizontalAppBarContent from './components/horizontal/AppBarContent'
 
 // ** Hook Import
 import { useSettings } from 'src/@core/hooks/useSettings'
@@ -38,41 +42,51 @@ const UserLayout = ({ children }: Props) => {
    */
   const hidden = useMediaQuery((theme: Theme) => theme.breakpoints.down('lg'))
 
-  const UpgradeToProImg = () => {
-    return (
-      <Box sx={{ mx: 'auto' }}>
-        {/* <a
-          target='_blank'
-          rel='noreferrer'
-          href='https://themeselection.com/products/materio-mui-react-nextjs-admin-template/'
-        >
-          <img width={230} alt='upgrade to premium' src={`/images/misc/upgrade-banner-${settings.mode}.png`} />
-        </a> */}
-      </Box>
-    )
-  }
-
   return (
-    <VerticalLayout
+    <Layout
       hidden={hidden}
       settings={settings}
       saveSettings={saveSettings}
-      verticalNavItems={VerticalNavItems()} // Navigation Items
-      afterVerticalNavMenuContent={UpgradeToProImg}
-      verticalAppBarContent={(
-        props // AppBar Content
-      ) => (
-        <VerticalAppBarContent
-          hidden={hidden}
-          settings={settings}
-          saveSettings={saveSettings}
-          toggleNavVisibility={props.toggleNavVisibility}
-        />
-      )}
+      {...(settings.layout === 'horizontal'
+        ? {
+            // ** Navigation Items
+            horizontalNavItems: HorizontalNavItems(),
+
+            // Uncomment the below line when using server-side menu in horizontal layout and comment the above line
+            // horizontalNavItems: ServerSideHorizontalNavItems(),
+
+            // ** AppBar Content
+            horizontalAppBarContent: props => (
+              <HorizontalAppBarContent
+                hidden={hidden}
+                settings={settings}
+                saveSettings={saveSettings}
+                setShowBackdrop={props.setShowBackdrop}
+              />
+            )
+          }
+        : {
+            // ** Navigation Items
+            verticalNavItems: VerticalNavItems(),
+
+            // Uncomment the below line when using server-side menu in vertical layout and comment the above line
+            // verticalNavItems: ServerSideVerticalNavItems(),
+
+            // ** AppBar Content
+            verticalAppBarContent: props => (
+              <VerticalAppBarContent
+                hidden={hidden}
+                settings={settings}
+                saveSettings={saveSettings}
+                setShowBackdrop={props.setShowBackdrop}
+                toggleNavVisibility={props.toggleNavVisibility}
+              />
+            )
+          })}
     >
       {children}
-      {/* <UpgradeToProButton /> */}
-    </VerticalLayout>
+      
+    </Layout>
   )
 }
 

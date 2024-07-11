@@ -2,10 +2,16 @@
 import { styled } from '@mui/material/styles'
 import Box, { BoxProps } from '@mui/material/Box'
 
+// ** Hooks
+import { useSettings } from 'src/@core/hooks/useSettings'
+
 // ** Util Import
 import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
 
 const DatePickerWrapper = styled(Box)<BoxProps>(({ theme }) => {
+  // ** Hook
+  const { settings } = useSettings()
+
   return {
     '& .react-datepicker-popper': {
       zIndex: 5
@@ -14,13 +20,13 @@ const DatePickerWrapper = styled(Box)<BoxProps>(({ theme }) => {
       width: '100%'
     },
     '& .react-datepicker': {
-      border: 'none',
-      boxShadow: theme.shadows[7],
       padding: theme.spacing(2, 0),
       color: theme.palette.text.primary,
       borderRadius: theme.shape.borderRadius,
       fontFamily: theme.typography.fontFamily,
       backgroundColor: theme.palette.background.paper,
+      boxShadow: theme.shadows[settings.skin === 'bordered' ? 0 : 7],
+      border: settings.skin === 'bordered' ? `1px solid ${theme.palette.divider}` : 'none',
       '& .react-datepicker__header': {
         padding: 0,
         border: 'none',
@@ -264,7 +270,8 @@ const DatePickerWrapper = styled(Box)<BoxProps>(({ theme }) => {
       },
       '& .react-datepicker__input-time-container': {
         display: 'flex',
-        alignItems: 'center'
+        alignItems: 'center',
+        ...(theme.direction === 'rtl' ? { flexDirection: 'row-reverse' } : {})
       },
       '& .react-datepicker__today-button': {
         borderRadius: '1rem',
@@ -347,6 +354,7 @@ const DatePickerWrapper = styled(Box)<BoxProps>(({ theme }) => {
     },
     '& .react-datepicker__close-icon': {
       paddingRight: theme.spacing(4),
+      ...(theme.direction === 'rtl' ? { right: 0, left: 'auto' } : {}),
       '&:after': {
         width: 'unset',
         height: 'unset',

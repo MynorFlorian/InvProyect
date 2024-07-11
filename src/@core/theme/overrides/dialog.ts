@@ -1,15 +1,19 @@
 // ** MUI Imports
 import { Theme } from '@mui/material/styles'
 
+// ** Theme Type Import
+import { Skin } from 'src/@core/layouts/types'
+
 // ** Util Import
 import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
 
-const Dialog = (theme: Theme) => {
+const Dialog = (theme: Theme, skin: Skin) => {
   return {
     MuiDialog: {
       styleOverrides: {
         paper: {
-          boxShadow: theme.shadows[6],
+          boxShadow: theme.shadows[skin === 'bordered' ? 0 : 6],
+          ...(skin === 'bordered' && { border: `1px solid ${theme.palette.divider}` }),
           '&:not(.MuiDialog-paperFullScreen)': {
             '@media (max-width:599px)': {
               margin: theme.spacing(4),

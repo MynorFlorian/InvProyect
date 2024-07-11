@@ -1,12 +1,16 @@
 // ** MUI Imports
 import { Theme } from '@mui/material/styles'
 
-const Card = (theme: Theme) => {
+// ** Theme Type Import
+import { Skin } from 'src/@core/layouts/types'
+
+const Card = (theme: Theme, skin: Skin) => {
   return {
     MuiCard: {
       styleOverrides: {
         root: {
-          boxShadow: theme.shadows[6],
+          boxShadow: skin !== 'bordered' ? theme.shadows[6] : theme.shadows[0],
+          ...(skin === 'bordered' && { border: `1px solid ${theme.palette.divider}` }),
           '& .card-more-options': {
             marginTop: theme.spacing(-1),
             marginRight: theme.spacing(-3)

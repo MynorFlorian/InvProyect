@@ -1,5 +1,5 @@
 // ** React Imports
-import { ReactNode } from 'react'
+import { ReactNode, useEffect } from 'react'
 
 // ** MUI Imports
 import { styled, useTheme } from '@mui/material/styles'
@@ -11,9 +11,13 @@ import { Settings } from 'src/@core/context/settingsContext'
 interface Props {
   hidden: boolean
   navWidth: number
+  navHover: boolean
   settings: Settings
   navVisible: boolean
   children: ReactNode
+  collapsedNavWidth: number
+  navigationBorderWidth: number
+  setNavHover: (values: boolean) => void
   setNavVisible: (value: boolean) => void
   saveSettings: (values: Settings) => void
 }
@@ -38,10 +42,64 @@ const SwipeableDrawer = styled(MuiSwipeableDrawer)<SwipeableDrawerProps>({
 
 const Drawer = (props: Props) => {
   // ** Props
-  const { hidden, children, navWidth, navVisible, setNavVisible } = props
+  const {
+    hidden,
+    children,
+    navHover,
+    navWidth,
+    settings,
+    navVisible,
+    setNavHover,
+    saveSettings,
+    setNavVisible,
+    collapsedNavWidth,
+    navigationBorderWidth
+  } = props
 
   // ** Hook
   const theme = useTheme()
+
+  // ** Vars
+  const { skin, navCollapsed } = settings
+
+  useEffect(() => {
+    if (navCollapsed && hidden) {
+      saveSettings({ ...settings, navCollapsed: false })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hidden])
+
+  const drawerColor = () => {
+    if (skin === 'semi-dark' && theme.palette.mode === 'light') {
+      return {
+        '& .MuiTypography-root, & .MuiSvgIcon-root': {
+          color: `rgba(${theme.palette.customColors.dark}, 0.87)`
+        }
+      }
+    } else if (skin === 'semi-dark' && theme.palette.mode === 'dark') {
+      return {
+        '& .MuiTypography-root, & .MuiSvgIcon-root': {
+          color: `rgba(${theme.palette.customColors.light}, 0.87)`
+        }
+      }
+    } else return {}
+  }
+
+  const drawerBgColor = () => {
+    if (skin === 'semi-dark' && theme.palette.mode === 'light') {
+      return {
+        backgroundColor: theme.palette.customColors.darkBg
+      }
+    } else if (skin === 'semi-dark' && theme.palette.mode === 'dark') {
+      return {
+        backgroundColor: theme.palette.customColors.lightBg
+      }
+    } else {
+      return {
+        backgroundColor: theme.palette.background.default
+      }
+    }
+  }
 
   // Drawer Props for Mobile & Tablet screens
   const MobileDrawerProps = {
@@ -57,7 +115,13 @@ const Drawer = (props: Props) => {
   const DesktopDrawerProps = {
     open: true,
     onOpen: () => null,
-    onClose: () => null
+    onClose: () => null,
+    onMouseEnter: () => {
+      setNavHover(true)
+    },
+    onMouseLeave: () => {
+      setNavHover(false)
+    }
   }
 
   return (
@@ -65,12 +129,14 @@ const Drawer = (props: Props) => {
       className='layout-vertical-nav'
       variant={hidden ? 'temporary' : 'permanent'}
       {...(hidden ? { ...MobileDrawerProps } : { ...DesktopDrawerProps })}
-      PaperProps={{ sx: { width: navWidth } }}
+      PaperProps={{ sx: { width: navCollapsed && !navHover ? collapsedNavWidth : navWidth } }}
       sx={{
-        width: navWidth,
+        width: navCollapsed ? collapsedNavWidth : navWidth,
         '& .MuiDrawer-paper': {
-          borderRight: 0,
-          backgroundColor: theme.palette.background.default
+          ...drawerColor(),
+          ...drawerBgColor(),
+          ...(!hidden && navCollapsed && navHover ? { boxShadow: 9 } : {}),
+          borderRight: navigationBorderWidth === 0 ? 0 : `${navigationBorderWidth}px solid ${theme.palette.divider}`
         }
       }}
     >

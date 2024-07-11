@@ -20,7 +20,7 @@ const input = (theme: Theme) => {
             borderBottom: `1px solid rgba(${theme.palette.customColors.main}, 0.32)`
           },
           '&.Mui-disabled:before': {
-            borderBottom: `1px solid ${theme.palette.text.disabled}`
+            borderBottomStyle: 'solid'
           }
         }
       }
@@ -44,7 +44,7 @@ const input = (theme: Theme) => {
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
-          '&:hover:not(.Mui-focused) .MuiOutlinedInput-notchedOutline': {
+          '&:hover:not(.Mui-focused):not(.Mui-disabled) .MuiOutlinedInput-notchedOutline': {
             borderColor: `rgba(${theme.palette.customColors.main}, 0.32)`
           },
           '&:hover.Mui-error .MuiOutlinedInput-notchedOutline': {

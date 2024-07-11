@@ -23,134 +23,162 @@ import AccountOutline from 'mdi-material-ui/AccountOutline'
 import MessageOutline from 'mdi-material-ui/MessageOutline'
 import HelpCircleOutline from 'mdi-material-ui/HelpCircleOutline'
 
+// ** Context
+import { useAuth } from 'src/hooks/useAuth'
+
+// ** Type Imports
+import { Settings } from 'src/@core/context/settingsContext'
+
+interface Props {
+  settings: Settings
+}
+
 // ** Styled Components
 const BadgeContentSpan = styled('span')(({ theme }) => ({
-  width: 8,
-  height: 8,
-  borderRadius: '50%',
-  backgroundColor: theme.palette.success.main,
-  boxShadow: `0 0 0 2px ${theme.palette.background.paper}`
+    width: 8,
+    height: 8,
+    borderRadius: '50%',
+    backgroundColor: theme.palette.success.main,
+    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`
 }))
 
-const UserDropdown = () => {
-  // ** States
-  const [anchorEl, setAnchorEl] = useState<Element | null>(null)
+const UserDropdown = (props: Props) => {
+    // ** Props
+    const { settings } = props
 
-  // ** Hooks
-  const router = useRouter()
+    // ** States
+    const [anchorEl, setAnchorEl] = useState<Element | null>(null)
 
-  const handleDropdownOpen = (event: SyntheticEvent) => {
-    setAnchorEl(event.currentTarget)
-  }
+    // ** Hooks
+    const router = useRouter()
+    const { logout, user } = useAuth()
 
-  const handleDropdownClose = (url?: string) => {
-    if (url) {
-      router.push(url)
+    // ** Vars
+    const { direction } = settings
+
+    const handleDropdownOpen = (event: SyntheticEvent) => {
+        setAnchorEl(event.currentTarget)
     }
-    setAnchorEl(null)
-  }
 
-  const styles = {
-    py: 2,
-    px: 4,
-    width: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    color: 'text.primary',
-    textDecoration: 'none',
-    '& svg': {
-      fontSize: '1.375rem',
-      color: 'text.secondary'
+    const handleDropdownClose = (url?: string) => {
+        if (url) {
+        router.push(url)
+        }
+        setAnchorEl(null)
     }
-  }
 
-  return (
-    <Fragment>
-      <Badge
-        overlap='circular'
-        onClick={handleDropdownOpen}
-        sx={{ ml: 2, cursor: 'pointer' }}
-        badgeContent={<BadgeContentSpan />}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-      >
-        <Avatar
-          alt='John Doe'
-          onClick={handleDropdownOpen}
-          sx={{ width: 40, height: 40 }}
-          src='/images/avatars/1.png'
-        />
-      </Badge>
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={() => handleDropdownClose()}
-        sx={{ '& .MuiMenu-paper': { width: 230, marginTop: 4 } }}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      >
-        <Box sx={{ pt: 2, pb: 3, px: 4 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+    const styles = {
+        py: 2,
+        px: 4,
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        color: 'text.primary',
+        textDecoration: 'none',
+        '& svg': {
+        fontSize: '1.375rem',
+        color: 'text.secondary'
+        }
+    }
+
+    const handleLogout = () => {
+        logout()
+        handleDropdownClose()
+    }
+
+    return (
+        <Fragment>
             <Badge
-              overlap='circular'
-              badgeContent={<BadgeContentSpan />}
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                overlap='circular'
+                onClick={handleDropdownOpen}
+                sx={{ ml: 2, cursor: 'pointer' }}
+                badgeContent={<BadgeContentSpan />}
+                anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right'
+                }}
             >
-              <Avatar alt='John Doe' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
+                <Avatar
+                    alt={`${user?.nombre}`}
+                    onClick={handleDropdownOpen}
+                    sx={{ width: 40, height: 40 }}
+                    src='/images/avatars/1.png'
+                />
             </Badge>
-            <Box sx={{ display: 'flex', marginLeft: 3, alignItems: 'flex-start', flexDirection: 'column' }}>
-              <Typography sx={{ fontWeight: 600 }}>John Doe</Typography>
-              <Typography variant='body2' sx={{ fontSize: '0.8rem', color: 'text.disabled' }}>
-                Admin
-              </Typography>
-            </Box>
-          </Box>
-        </Box>
-        <Divider sx={{ mt: 0, mb: 1 }} />
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
-          <Box sx={styles}>
-            <AccountOutline sx={{ marginRight: 2 }} />
-            Profile
-          </Box>
-        </MenuItem>
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
-          <Box sx={styles}>
-            <EmailOutline sx={{ marginRight: 2 }} />
-            Inbox
-          </Box>
-        </MenuItem>
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
-          <Box sx={styles}>
-            <MessageOutline sx={{ marginRight: 2 }} />
-            Chat
-          </Box>
-        </MenuItem>
-        <Divider />
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
-          <Box sx={styles}>
-            <CogOutline sx={{ marginRight: 2 }} />
-            Settings
-          </Box>
-        </MenuItem>
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
-          <Box sx={styles}>
-            <CurrencyUsd sx={{ marginRight: 2 }} />
-            Pricing
-          </Box>
-        </MenuItem>
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
-          <Box sx={styles}>
-            <HelpCircleOutline sx={{ marginRight: 2 }} />
-            FAQ
-          </Box>
-        </MenuItem>
-        <Divider />
-        <MenuItem sx={{ py: 2 }} onClick={() => handleDropdownClose('/pages/login')}>
-          <LogoutVariant sx={{ marginRight: 2, fontSize: '1.375rem', color: 'text.secondary' }} />
-          Logout
-        </MenuItem>
-      </Menu>
-    </Fragment>
-  )
+            <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={() => handleDropdownClose()}
+                sx={{ '& .MuiMenu-paper': { width: 230, marginTop: 4 } }}
+                anchorOrigin={{ vertical: 'bottom', horizontal: direction === 'ltr' ? 'right' : 'left' }}
+                transformOrigin={{ vertical: 'top', horizontal: direction === 'ltr' ? 'right' : 'left' }}
+            >
+                <Box sx={{ pt: 2, pb: 3, px: 4 }}>
+                    {/* Nombre */}
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Badge
+                        overlap='circular'
+                        badgeContent={<BadgeContentSpan />}
+                        anchorOrigin={{
+                            vertical: 'bottom',
+                            horizontal: 'right'
+                        }}
+                        >
+                        <Avatar alt='John Doe' src='/images/avatars/1.png' sx={{ width: '2.5rem', height: '2.5rem' }} />
+                        </Badge>
+                        <Box sx={{ display: 'flex', marginLeft: 3, alignItems: 'flex-start', flexDirection: 'column' }}>
+                        <Typography sx={{ fontWeight: 600 }}>{`${user?.nombre}`}</Typography>
+                        </Box>
+                    </Box>
+                </Box>
+
+                <Divider sx={{ mt: 0, mb: 1 }} />
+
+                {/* <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose('/apps/user/view/12')}>
+                <Box sx={styles}>
+                    <AccountOutline sx={{ marginRight: 2 }} />
+                    Profile
+                </Box>
+                </MenuItem>
+                <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose('/apps/email')}>
+                <Box sx={styles}>
+                    <EmailOutline sx={{ marginRight: 2 }} />
+                    Inbox
+                </Box>
+                </MenuItem>
+                <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose('/apps/chat')}>
+                <Box sx={styles}>
+                    <MessageOutline sx={{ marginRight: 2 }} />
+                    Chat
+                </Box>
+                </MenuItem>
+                <Divider />
+                <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose('/pages/account-settings')}>
+                <Box sx={styles}>
+                    <CogOutline sx={{ marginRight: 2 }} />
+                    Settings
+                </Box>
+                </MenuItem>
+                <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose('/pages/pricing')}>
+                <Box sx={styles}>
+                    <CurrencyUsd sx={{ marginRight: 2 }} />
+                    Pricing
+                </Box>
+                </MenuItem>
+                <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose('/pages/faq')}>
+                <Box sx={styles}>
+                    <HelpCircleOutline sx={{ marginRight: 2 }} />
+                    FAQ
+                </Box>
+                </MenuItem>
+                <Divider /> */}
+                <MenuItem sx={{ py: 2 }} onClick={handleLogout}>
+                    <LogoutVariant sx={{ marginRight: 2, fontSize: '1.375rem', color: 'text.secondary' }} />
+                    Cerrar Sesión
+                </MenuItem>
+            </Menu>
+        </Fragment>
+    )
 }
 
 export default UserDropdown

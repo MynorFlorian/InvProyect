@@ -6,9 +6,17 @@ import MuiListSubheader, { ListSubheaderProps } from '@mui/material/ListSubheade
 
 // ** Types
 import { NavSectionTitle } from 'src/@core/layouts/types'
+import { Settings } from 'src/@core/context/settingsContext'
+
+// ** Custom Components Imports
+import Translations from 'src/layouts/components/Translations'
 
 interface Props {
+  navHover: boolean
+  settings: Settings
   item: NavSectionTitle
+  collapsedNavWidth: number
+  navigationBorderWidth: number
 }
 
 // ** Styled Components
@@ -35,38 +43,76 @@ const TypographyHeaderText = styled(Typography)<TypographyProps>(({ theme }) => 
 
 const VerticalNavSectionTitle = (props: Props) => {
   // ** Props
-  const { item } = props
+  const { item, navHover, settings, collapsedNavWidth, navigationBorderWidth } = props
 
   // ** Hook
   const theme = useTheme()
 
-  return (
-    <ListSubheader
-      className='nav-section-title'
-      sx={{
-        px: 0,
-        py: 1.75,
+  // ** Vars
+  const { skin, navCollapsed } = settings
+
+  const conditionalStyling = () => {
+    if (skin === 'semi-dark' && theme.palette.mode === 'light') {
+      return {
+        color: `rgba(${theme.palette.customColors.dark}, 0.38)`,
+        '& .MuiDivider-root:before, & .MuiDivider-root:after, & hr': {
+          borderColor: `rgba(${theme.palette.customColors.dark}, ${navCollapsed && !navHover ? 0.3 : 0.12})`
+        }
+      }
+    } else if (skin === 'semi-dark' && theme.palette.mode === 'dark') {
+      return {
+        color: `rgba(${theme.palette.customColors.light}, 0.38)`,
+        '& .MuiDivider-root:before, & .MuiDivider-root:after, & hr': {
+          borderColor: `rgba(${theme.palette.customColors.light}, ${navCollapsed && !navHover ? 0.3 : 0.12})`
+        }
+      }
+    } else {
+      return {
         color: theme.palette.text.disabled,
         '& .MuiDivider-root:before, & .MuiDivider-root:after, & hr': {
-          borderColor: `rgba(${theme.palette.customColors.main}, 0.12)`
+          borderColor: `rgba(${theme.palette.customColors.main}, ${navCollapsed && !navHover ? 0.3 : 0.12})`
         }
-      }}
-    >
-      <Divider
-        textAlign='left'
-        sx={{
-          m: 0,
-          width: '100%',
-          lineHeight: 'normal',
-          textTransform: 'uppercase',
-          '&:before, &:after': { top: 7, transform: 'none' },
-          '& .MuiDivider-wrapper': { px: 2.5, fontSize: '0.75rem', letterSpacing: '0.21px' }
-        }}
-      >
-        <TypographyHeaderText noWrap>{item.sectionTitle}</TypographyHeaderText>
-      </Divider>
-    </ListSubheader>
-  )
+      }
+    }
+  }
+
+    return (
+        <ListSubheader
+            className='nav-section-title'
+            sx={{
+            ...conditionalStyling(),
+            ...(navCollapsed && !navHover
+                ? {
+                    py: 3.5,
+                    pr: (collapsedNavWidth - navigationBorderWidth - 24) / 8 - 1,
+                    pl: (collapsedNavWidth - navigationBorderWidth - 24) / 8 + 0.25
+                }
+                : { px: 0, py: 1.75 })
+            }}
+        >
+            <Divider
+            textAlign='left'
+            sx={{
+                m: 0,
+                width: '100%',
+                lineHeight: 'normal',
+                ...(navCollapsed && !navHover
+                ? {}
+                : {
+                    textTransform: 'uppercase',
+                    '&:before, &:after': { top: 7, transform: 'none' },
+                    '& .MuiDivider-wrapper': { px: 2.5, fontSize: '0.75rem', letterSpacing: '0.21px' }
+                    })
+            }}
+            >
+            {navCollapsed && !navHover ? null : (
+                <TypographyHeaderText noWrap>
+                <Translations text={item.sectionTitle} />
+                </TypographyHeaderText>
+            )}
+            </Divider>
+        </ListSubheader>
+    )
 }
 
 export default VerticalNavSectionTitle

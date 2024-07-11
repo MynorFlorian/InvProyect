@@ -1,3 +1,4 @@
+import { RolData } from "src/interfaces/objects/RolData"
 import { UserData } from "src/interfaces/objects/UserData"
 import { NotificationData } from "src/interfaces/objects/NotificationData"
 
@@ -35,7 +36,7 @@ export type UserDataType = {
     codigoReferido?:string;
     consumidorStripe?:string;
     categorias?: string;
-    Rol: any
+    Rol: RolData
 };
 
 export type AuthValuesType = {
@@ -50,11 +51,12 @@ export type AuthValuesType = {
     register: (params: RegisterParams, errorCallback?: ErrCallbackType, onSuccesCallback?: SuccesCallbackType) => void
 
     // Role auth
-    isAdmin: () => boolean 
+    isAdmin: () => boolean
+    isMarketing: () => boolean
     enableUrl: boolean,
 
     // User data
-    // getUserName: () => string
+    getUserName: () => string
     getFullUserName: () => string
 }
 

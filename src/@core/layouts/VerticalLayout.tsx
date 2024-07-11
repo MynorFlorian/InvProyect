@@ -3,6 +3,7 @@ import { useState } from 'react'
 
 // ** MUI Imports
 import Fab from '@mui/material/Fab'
+import Backdrop from '@mui/material/Backdrop'
 import { styled } from '@mui/material/styles'
 import Box, { BoxProps } from '@mui/material/Box'
 
@@ -17,6 +18,7 @@ import { LayoutProps } from 'src/@core/layouts/types'
 
 // ** Components
 import AppBar from './components/vertical/appBar'
+import Customizer from 'src/@core/components/customizer'
 import Navigation from './components/vertical/navigation'
 import Footer from './components/shared-components/footer'
 import ScrollToTop from 'src/@core/components/scroll-to-top'
@@ -50,14 +52,18 @@ const ContentWrapper = styled('main')(({ theme }) => ({
 
 const VerticalLayout = (props: LayoutProps) => {
   // ** Props
-  const { settings, children, scrollToTop } = props
+  const { hidden, settings, children, scrollToTop } = props
 
   // ** Vars
-  const { contentWidth } = settings
+  const { skin, contentWidth } = settings
   const navWidth = themeConfig.navigationSize
+  const navigationBorderWidth = skin === 'bordered' ? 1 : 0
+  const collapsedNavWidth = themeConfig.collapsedNavigationSize
 
   // ** States
+  const [navHover, setNavHover] = useState<boolean>(false)
   const [navVisible, setNavVisible] = useState<boolean>(false)
+  const [showBackdrop, setShowBackdrop] = useState<boolean>(false)
 
   // ** Toggle Functions
   const toggleNavVisibility = () => setNavVisible(!navVisible)
@@ -66,16 +72,22 @@ const VerticalLayout = (props: LayoutProps) => {
     <>
       <VerticalLayoutWrapper className='layout-wrapper'>
         {/* Navigation Menu */}
-        <Navigation
-          navWidth={navWidth}
-          navVisible={navVisible}
-          setNavVisible={setNavVisible}
-          toggleNavVisibility={toggleNavVisibility}
-          {...props}
-        />
+        {settings.navHidden ? null : (
+          <Navigation
+            navWidth={navWidth}
+            navHover={navHover}
+            navVisible={navVisible}
+            setNavHover={setNavHover}
+            setNavVisible={setNavVisible}
+            collapsedNavWidth={collapsedNavWidth}
+            toggleNavVisibility={toggleNavVisibility}
+            navigationBorderWidth={navigationBorderWidth}
+            {...props}
+          />
+        )}
         <MainContentWrapper className='layout-content-wrapper'>
           {/* AppBar Component */}
-          <AppBar toggleNavVisibility={toggleNavVisibility} {...props} />
+          <AppBar setShowBackdrop={setShowBackdrop} toggleNavVisibility={toggleNavVisibility} {...props} />
 
           {/* Content */}
           <ContentWrapper
@@ -92,14 +104,20 @@ const VerticalLayout = (props: LayoutProps) => {
           </ContentWrapper>
 
           {/* Footer Component */}
-          <Footer {...props} />
+          <Footer showBackdrop={showBackdrop} {...props} />
 
           {/* Portal for React Datepicker */}
           <DatePickerWrapper sx={{ zIndex: 11 }}>
             <Box id='react-datepicker-portal'></Box>
           </DatePickerWrapper>
         </MainContentWrapper>
+
+        {/* Backdrop */}
+        <Backdrop open={showBackdrop} onClick={() => setShowBackdrop(false)} sx={{ zIndex: 12 }} />
       </VerticalLayoutWrapper>
+
+      {/* Customizer */}
+      {themeConfig.disableCustomizer || hidden ? null : <Customizer />}
 
       {/* Scroll to top button */}
       {scrollToTop ? (

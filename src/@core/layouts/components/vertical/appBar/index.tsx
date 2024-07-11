@@ -3,16 +3,21 @@ import { ReactNode } from 'react'
 
 // ** MUI Imports
 import { styled, useTheme } from '@mui/material/styles'
+import useScrollTrigger from '@mui/material/useScrollTrigger'
 import MuiAppBar, { AppBarProps } from '@mui/material/AppBar'
 import MuiToolbar, { ToolbarProps } from '@mui/material/Toolbar'
 
 // ** Type Import
 import { Settings } from 'src/@core/context/settingsContext'
 
+// ** Util Import
+import { hexToRGBA } from 'src/@core/utils/hex-to-rgba'
+
 interface Props {
   hidden: boolean
   settings: Settings
   toggleNavVisibility: () => void
+  setShowBackdrop: (val: boolean) => void
   saveSettings: (values: Settings) => void
   verticalAppBarContent?: (props?: any) => ReactNode
 }
@@ -47,15 +52,32 @@ const LayoutAppBar = (props: Props) => {
 
   // ** Hooks
   const theme = useTheme()
+  const scrollTrigger = useScrollTrigger({ threshold: 0, disableHysteresis: true })
 
   // ** Vars
-  const { contentWidth } = settings
+  const { skin, appBar, appBarBlur, contentWidth } = settings
+
+  const appBarFixedStyles = () => {
+    return {
+      paddingLeft: `${theme.spacing(5)} !important`,
+      paddingRight: `${theme.spacing(5)} !important`,
+      ...(appBarBlur && { backdropFilter: 'blur(8px)' }),
+      boxShadow: theme.shadows[skin === 'bordered' ? 0 : 3],
+      backgroundColor: hexToRGBA(theme.palette.background.paper, appBarBlur ? 0.85 : 1),
+      ...(skin === 'bordered' && { border: `1px solid ${theme.palette.divider}`, borderTopWidth: 0 })
+    }
+  }
+
+  if (appBar === 'hidden') {
+    return null
+  }
 
   return (
-    <AppBar elevation={0} color='default' className='layout-navbar' position='static'>
+    <AppBar elevation={0} color='default' className='layout-navbar' position={appBar === 'fixed' ? 'sticky' : 'static'}>
       <Toolbar
         className='navbar-content-container'
         sx={{
+          ...(appBar === 'fixed' && scrollTrigger && { ...appBarFixedStyles() }),
           ...(contentWidth === 'boxed' && {
             '@media (min-width:1440px)': { maxWidth: `calc(1440px - ${theme.spacing(6)} * 2)` }
           })

@@ -1,101 +1,42 @@
 // ** Icon imports
-import Login from 'mdi-material-ui/Login'
-import Table from 'mdi-material-ui/Table'
+import ChartDonut from 'mdi-material-ui/ChartDonut'
 import CubeOutline from 'mdi-material-ui/CubeOutline'
 import HomeOutline from 'mdi-material-ui/HomeOutline'
-import FormatLetterCase from 'mdi-material-ui/FormatLetterCase'
-import AccountCogOutline from 'mdi-material-ui/AccountCogOutline'
-import CreditCardOutline from 'mdi-material-ui/CreditCardOutline'
-import AccountPlusOutline from 'mdi-material-ui/AccountPlusOutline'
-import AlertCircleOutline from 'mdi-material-ui/AlertCircleOutline'
-import GoogleCirclesExtended from 'mdi-material-ui/GoogleCirclesExtended'
-import { FormatListBulleted, AccountCashOutline, AccountGroup, FileDocumentOutline } from 'mdi-material-ui'
+import AccountOutline from 'mdi-material-ui/AccountOutline'
+import MessageOutline from 'mdi-material-ui/MessageOutline'
+import FileDocument from 'mdi-material-ui/FileDocument'
+import Food from 'mdi-material-ui/Food'
+import { FormatListBulleted, PlusCircle, CellphoneMessage, MapLegend, CogOutline, SelectGroup } from 'mdi-material-ui'
 
 // ** Type import
 import { VerticalNavItemsType } from 'src/@core/layouts/types'
+import { ChartBellCurve, ChartBellCurveCumulative, ChartLine } from 'mdi-material-ui'
+import { useAuth } from 'src/hooks/useAuth'
+import { Statics } from 'src/utils/statics'
+
+// ** Hook Imports
 
 const navigation = (): VerticalNavItemsType => {
-  return [
-    {
-      title: 'Dashboard',
-      icon: HomeOutline,
-      path: '/'
-    },
-    {
-      title: 'Insumos',
-      icon: FormatListBulleted,
-      path: '/'
-    },
-    {
-      title: 'Vendedores',
-      icon: AccountCashOutline,
-      path: '/'
-    },
-    {
-      title: 'Clientes',
-      icon: AccountGroup,
-      path: '/clientes'
-    },
-    {
-      title: 'Documentos',
-      icon: FileDocumentOutline,
-      path: '/'
-    },
-    {
-      title: 'Account Settings',
-      icon: AccountCogOutline,
-      path: '/account-settings'
-    },
-    {
-      sectionTitle: 'Pages'
-    },
-    {
-      title: 'Login',
-      icon: Login,
-      path: '/pages/login',
-      openInNewTab: true
-    },
-    {
-      title: 'Register',
-      icon: AccountPlusOutline,
-      path: '/pages/register',
-      openInNewTab: true
-    },
-    {
-      title: 'Error',
-      icon: AlertCircleOutline,
-      path: '/pages/error',
-      openInNewTab: true
-    },
-    {
-      sectionTitle: 'User Interface'
-    },
-    {
-      title: 'Typography',
-      icon: FormatLetterCase,
-      path: '/typography'
-    },
-    {
-      title: 'Icons',
-      path: '/icons',
-      icon: GoogleCirclesExtended
-    },
-    {
-      title: 'Cards',
-      icon: CreditCardOutline,
-      path: '/cards'
-    },
-    {
-      title: 'Tables',
-      icon: Table,
-      path: '/tables'
-    },
-    {
-      icon: CubeOutline,
-      title: 'Form Layouts',
-      path: '/form-layouts'
-    }
-  ]
+
+    const auth = useAuth();
+
+    // if(auth.isAdmin()) {
+        return [
+
+            // * Dashboard *
+            {
+                icon: HomeOutline,
+                title: 'Dashboard',
+                path: '/dashboard'
+            },
+
+
+        ];
+    // }
+
+
+
+    return [];
 }
 
 export default navigation
